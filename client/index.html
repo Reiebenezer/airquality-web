@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Air Quality by Cyb Robotics</title>
+  </head>
+  <body>
+    <p id="sensors"></p>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      socket.emit("device-connect");
+
+      socket.on("start", (data) => console.log(data));
+
+      //   let timestamp = 0;
+      //   setInterval(() => {
+      //     timestamp = Date.now();
+      //     socket.emit("p");
+      //   }, 1000);
+
+      //   socket.on("pong", () => {
+      //     console.log(`${Date.now() - timestamp}ms`);
+      //   });
+
+      socket.on("active-sensors", (sensorIDs) => {
+        if (sensorIDs.length) {
+          sensors.innerHTML = `Sensors:<br><br>${sensorIDs.map((id) => {
+            return id + "<br>";
+          })}`;
+        } else {
+          sensors.innerHTML = "Sensors: None";
+        }
+      });
+    </script>
+  </body>
+</html>
