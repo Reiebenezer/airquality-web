@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality by Cyb Robotics</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <p>Connected sensors:</p>
+    <p id="sensors"></p>
+    <div id="sensor-list">
+
+    </div>
+
+    <script>
+        // Connect to the WebSocket channel for the browser
+        const socket = new WebSocket('ws://localhost:1337/browser');
+
+        socket.addEventListener('open', (event) => {
+            console.log('Connected to WebSocket channel for the browser');
+
+        });
+
+        socket.addEventListener('message', msg => {
+            const sensors = JSON.parse(msg['data']);
+
+            document.querySelector('#sensor-list').innerHTML = "";
+            sensors.forEach(sensor => {
+                const p = document.createElement('p');
+                p.innerHTML = sensor.id;
+
+                const btn = document.createElement('button');
+                btn.innerHTML = "Connect";
+
+                btn.onclick = () => {
+                    console.log(`Temperature: ${sensor.temp}°C\nHumidity: ${sensor.humidity}g/kg`);
+                }
+
+                document.querySelector('#sensor-list').append(p, btn);
+            });
+            // document.querySelector('#sensor-list').innerHTML = JSON.parse(msg['data']).map(data => { return "<p>" + data + "</p><button>Connect</button>"});
+        });
+
+        socket.addEventListener('close', (event) => {
+
+        });
+    </script>
+</body>
+</html>
