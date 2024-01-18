@@ -34,7 +34,7 @@
                 btn.innerHTML = "Connect";
 
                 btn.onclick = () => {
-                    console.log(`Temperature: ${sensor.temp}°C\nHumidity: ${sensor.humidity}g/kg`);
+                    console.log(`Temperature: ${sensor.temperature}°C\nHumidity: ${sensor.humidity}g/kg\nGas Concentration: ${sensor.gasConcentration}ppm`);
                 }
 
                 document.querySelector('#sensor-list').append(p, btn);

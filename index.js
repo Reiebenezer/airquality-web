@@ -17,6 +17,7 @@ app.ws('/esp', ws => {
     ws.id = -1;
     ws.temperature = 0;
     ws.humidity = 0;
+    ws.gasConcentration = 0;
     
     ws.on('message', msg => {
         ws.timeout = 0;
@@ -36,10 +37,12 @@ app.ws('/esp', ws => {
                 case "data":
                     ws.temperature = parsed_msg["temperature"] || ws.temperature;
                     ws.humidity = parsed_msg["humidity"] || ws.humidity;
-    
-                    console.log("Sensor ESP ID: " + ws.id);
-                    console.log(`Temperature: ${ws.temperature}`);
-                    console.log(`Humidity: ${ws.humidity}\n\n`);
+                    ws.gasConcentration = parsed_msg["gas_concentration"] || ws.gasConcentration;
+
+                    // console.log("Sensor ESP ID: " + ws.id);
+                    // console.log(`Temperature: ${ws.temperature}`);
+                    // console.log(`Humidity: ${ws.humidity}\n\n`);
+                    // console.log(`Gas Concentration: ${ws.gasConcentration}\n\n`);
 
                     break;
             
@@ -82,7 +85,7 @@ app.listen(PORT, () => {
 });
 
 setInterval(() => {
-    const sensor_ids = [];
+    const sensor_data = [];
 
     SENSORS.forEach(sensor => {
         if (sensor.timeout > 10) {
@@ -92,17 +95,18 @@ setInterval(() => {
             console.log(`Removed unresponsive sensor ${sensor.id}`);
 
         } else {
-            sensor_ids.push({
+            sensor_data.push({
                 id: sensor.id,
-                temp: sensor.temperature,
-                humidity: sensor.humidity
+                temperature: sensor.temperature,
+                humidity: sensor.humidity,
+                gasConcentration: sensor.gasConcentration
             });
             sensor.timeout++;
         }
     });
 
     USERS.forEach(user => {
-        user.send(JSON.stringify(sensor_ids));
+        user.send(JSON.stringify(sensor_data));
     });
 
 }, 1000);
