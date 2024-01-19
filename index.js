@@ -20,11 +20,9 @@ app.ws('/esp', ws => {
     ws.gasConcentration = 0;
     
     ws.on('message', msg => {
-        ws.timeout = 0;
-        // console.clear();
         
         if (msg === "ping") {
-            // console.log("Sensor ping: " + ws.id);
+            ws.timeout = 0;
             
         } else {
             const parsed_msg = JSON.parse(msg);
