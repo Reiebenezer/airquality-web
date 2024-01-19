@@ -21,9 +21,11 @@ app.ws('/esp', ws => {
     
     ws.on('message', msg => {
         ws.timeout = 0;
+        // console.clear();
         
         if (msg === "ping") {
             // console.log("Sensor ping: " + ws.id);
+            
         } else {
             const parsed_msg = JSON.parse(msg);
 
@@ -38,6 +40,9 @@ app.ws('/esp', ws => {
                     ws.temperature = parsed_msg["temperature"] || ws.temperature;
                     ws.humidity = parsed_msg["humidity"] || ws.humidity;
                     ws.gasConcentration = parsed_msg["gas_concentration"] || ws.gasConcentration;
+
+                    // Insert new row in database
+                    
 
                     // console.log("Sensor ESP ID: " + ws.id);
                     // console.log(`Temperature: ${ws.temperature}`);
