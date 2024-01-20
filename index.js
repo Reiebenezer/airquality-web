@@ -13,8 +13,6 @@ const PORT = process.env.PORT || 1337;
 const SENSORS = new Set();
 const USERS = new Set();
 
-const mongoose = require('mongoose');
-
 app.ws('/esp', ws => {
     SENSORS.add(ws);
 
@@ -89,49 +87,15 @@ app.ws('/browser', ws => {
 
 app.get('/', (req, res) => {
     res.render("index", { ip: 'ws://192.168.3.156:1337' });
-}); 
+});
+
+app.get('/db', (req, res) => {
+    res.sendFile(path.join(__dirname, "client/db.html"));
+})
 
 app.listen(PORT, () => {
     console.log(`node: SERVER STARTED at port ${PORT}`);
 });
-
-
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost/sensor_data', { useNewUrlParser: true });
-
-// Define a schema for sensor data
-const sensorDataSchema = new mongoose.Schema({
-  sensorId: String,
-  temperature: Number,
-  humidity: Number,
-  gasConcentration: Number,
-  timestamp: { type: Date, default: Date.now }
-});
-
-// Create a model for sensor data
-const SensorData = mongoose.model('SensorData', sensorDataSchema);
-
-
-// To be modified to work for the saving the data
-async function saveSensorData(sensorData) {
-try {
-    const data = await sensorData.save();
-    console.log('Sensor data saved successfully!');
-} catch (err) {
-    console.error(err);
-}
-    }
-
-// Create a sample test data for the database
-const sensorData = new SensorData({
-    sensorId: "1",
-    temperature: 20,
-    humidity: 50,
-    gasConcentration: 100
-});
-
-// Save the sample data to the database
-saveSensorData(sensorData);
 
 setInterval(() => {
     const sensor_data = [];
