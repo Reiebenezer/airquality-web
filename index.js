@@ -8,6 +8,8 @@ const PORT = process.env.PORT || 1337;
 const SENSORS = new Set();
 const USERS = new Set();
 
+const mongoose = require('mongoose');
+
 app.ws('/esp', ws => {
     SENSORS.add(ws);
 
@@ -21,11 +23,9 @@ app.ws('/esp', ws => {
     
     ws.on('message', msg => {
         ws.timeout = 0;
-        // console.clear();
         
         if (msg === "ping") {
             // console.log("Sensor ping: " + ws.id);
-            
         } else {
             const parsed_msg = JSON.parse(msg);
 
@@ -40,9 +40,6 @@ app.ws('/esp', ws => {
                     ws.temperature = parsed_msg["temperature"] || ws.temperature;
                     ws.humidity = parsed_msg["humidity"] || ws.humidity;
                     ws.gasConcentration = parsed_msg["gas_concentration"] || ws.gasConcentration;
-
-                    // Insert new row in database
-                    
 
                     // console.log("Sensor ESP ID: " + ws.id);
                     // console.log(`Temperature: ${ws.temperature}`);
@@ -62,6 +59,7 @@ app.ws('/esp', ws => {
         console.log(`Sensor ${ws.id} disconnected from server`);
     });
 });
+
 
 app.ws('/browser', ws => {
     console.log("New browser connected");
@@ -89,6 +87,44 @@ app.listen(PORT, () => {
     console.log(`node: SERVER STARTED at port ${PORT}`);
 });
 
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/sensor_data', { useNewUrlParser: true });
+
+// Define a schema for sensor data
+const sensorDataSchema = new mongoose.Schema({
+  sensorId: String,
+  temperature: Number,
+  humidity: Number,
+  gasConcentration: Number,
+  timestamp: { type: Date, default: Date.now }
+});
+
+// Create a model for sensor data
+const SensorData = mongoose.model('SensorData', sensorDataSchema);
+
+
+// To be modified to work for the saving the data
+async function saveSensorData(sensorData) {
+try {
+    const data = await sensorData.save();
+    console.log('Sensor data saved successfully!');
+} catch (err) {
+    console.error(err);
+}
+    }
+
+// Create a sample test data for the database
+const sensorData = new SensorData({
+    sensorId: "1",
+    temperature: 20,
+    humidity: 50,
+    gasConcentration: 100
+});
+
+// Save the sample data to the database
+saveSensorData(sensorData);
+
 setInterval(() => {
     const sensor_data = [];
 
@@ -106,8 +142,18 @@ setInterval(() => {
                 humidity: sensor.humidity,
                 gasConcentration: sensor.gasConcentration
             });
+
             sensor.timeout++;
         }
+        // // Save sensor data to MongoDB example
+        // var sensorData = new SensorData({
+        //     sensorId: sensor.id,
+        //     temperature: sensor.temperature,
+        //     humidity: sensor.humidity,
+        //     gasConcentration: sensor.gasConcentration
+        // });
+
+        // saveSensorData(sensorData);
     });
 
     USERS.forEach(user => {
