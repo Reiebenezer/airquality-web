@@ -28,24 +28,21 @@
                     <p>Temperature</p>
                     <h3 id="stat-temperature">24°</h3>
                 </div>
-                <hr />
                 <div class="stat">
                     <p>Humidity</p>
                     <h3 id="stat-humidity">86</h3>
                 </div>
-                <hr />
-                <!-- <div class="stat">
+                <div class="stat">
                     <p>Carbon Monoxide</p>
-                    <h3>24</h3>
+                    <h3 id="stat-carbonMonoxide">24</h3>
+                </div>
+                <!-- <div class="stat">
+                    <p>Flammable Gases</p>
+                    <h3 id="stat-gascontent">24</h3>
                 </div> -->
                 <div class="stat">
-                    <p>Flammable Gas Content</p>
-                    <h3 id="stat-gascontent">24</h3>
-                </div>
-                <hr />
-                <div class="stat">
-                    <p>Particulates</p>
-                    <h3>58</h3>
+                    <p>Ozone</p>
+                    <h3 id="stat-ozone">58</h3>
                 </div>
             </section>
 
@@ -58,7 +55,7 @@
 
         <script>
             // Connect to the WebSocket channel for the browser
-            const socket = new WebSocket("ws://127.0.0.1:1337/browser");
+            const socket = new WebSocket("<%= ip %>/browser");
 
             socket.addEventListener("open", (event) => {
                 console.log("Connected to WebSocket channel for the browser");
@@ -68,13 +65,24 @@
                 const sensors = JSON.parse(msg["data"]);
 
                 sensors.forEach((sensor) => {
-                    console.log(
-                        `Temperature: ${sensor.temperature}°C\nHumidity: ${sensor.humidity}g/kg\nGas Concentration: ${sensor.gasConcentration}ppm`
-                    );
+                    // console.log(sensor);
 
-                    document.querySelector('#stat-temperature').innerHTML = `${Math.round(sensor.temperature)}°`;
-                    document.querySelector('#stat-humidity').innerHTML = `${Math.round(sensor.humidity)}`;
-                    document.querySelector('#stat-gascontent').innerHTML = `${Math.round(sensor.gasConcentration)}`;
+                    document.querySelector(
+                        "#stat-temperature"
+                    ).innerHTML = `${Math.round(sensor.temperature)}°`;
+
+                    document.querySelector(
+                        "#stat-humidity"
+                    ).innerHTML = `${Math.round(sensor.humidity)}`;
+
+                    document.querySelector(
+                        "#stat-carbonMonoxide"
+                    ).innerHTML = `${Math.round(sensor.carbonMonoxide)}`;
+
+                    document.querySelector(
+                        "#stat-ozone"
+                    ).innerHTML = `${Math.round(sensor.ozone)}`;
+                    // document.querySelector('#stat-gascontent').innerHTML = `${Math.round(sensor.gasConcentration)}`;
                 });
             });
 
