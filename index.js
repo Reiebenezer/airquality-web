@@ -1,7 +1,12 @@
+const path = require('path');
 const express = require('express');
 
 const app = express();
 const appWs = require('express-ws')(app);
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'client'));
+app.use(express.static('client'));
 
 const PORT = process.env.PORT || 1337;
 
@@ -17,15 +22,21 @@ app.ws('/esp', ws => {
     ws.timeout = 0;
 
     ws.id = -1;
-    ws.temperature = 0;
-    ws.humidity = 0;
+
+    ws.data = {
+        temperature: 0,
+        humidity: 0,
+        ozone: 0,
+        carbonMonoxide: 0
+    };
+
     ws.gasConcentration = 0;
     
     ws.on('message', msg => {
-        ws.timeout = 0;
         
         if (msg === "ping") {
-            // console.log("Sensor ping: " + ws.id);
+            ws.timeout = 0;
+            
         } else {
             const parsed_msg = JSON.parse(msg);
 
@@ -37,15 +48,15 @@ app.ws('/esp', ws => {
                     break;
 
                 case "data":
-                    ws.temperature = parsed_msg["temperature"] || ws.temperature;
-                    ws.humidity = parsed_msg["humidity"] || ws.humidity;
                     ws.gasConcentration = parsed_msg["gas_concentration"] || ws.gasConcentration;
 
-                    // console.log("Sensor ESP ID: " + ws.id);
-                    // console.log(`Temperature: ${ws.temperature}`);
-                    // console.log(`Humidity: ${ws.humidity}\n\n`);
-                    // console.log(`Gas Concentration: ${ws.gasConcentration}\n\n`);
+                    ws.data.temperature     = parsed_msg["temperature"]     || ws.data.temperature;
+                    ws.data.humidity        = parsed_msg["humidity"]        || ws.data.humidity;
+                    ws.data.ozone           = parsed_msg["ozone"]           || ws.data.ozone;
+                    ws.data.carbonMonoxide  = parsed_msg["carbon_monoxide"] || ws.data.carbonMonoxide;
 
+                    // Insert new row in database
+                    
                     break;
             
                 default:
@@ -63,8 +74,6 @@ app.ws('/esp', ws => {
 
 app.ws('/browser', ws => {
     console.log("New browser connected");
-
-    ws.id = Math.random().toString(36).substring(7);
     USERS.add(ws);
 
     ws.on('message', msg => {
@@ -77,10 +86,9 @@ app.ws('/browser', ws => {
     });
 });
 
-app.use(express.static('client'));
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/client/index.html");
+    res.render("index", { ip: 'ws://192.168.3.156:1337' });
 }); 
 
 app.listen(PORT, () => {
@@ -136,13 +144,7 @@ setInterval(() => {
             console.log(`Removed unresponsive sensor ${sensor.id}`);
 
         } else {
-            sensor_data.push({
-                id: sensor.id,
-                temperature: sensor.temperature,
-                humidity: sensor.humidity,
-                gasConcentration: sensor.gasConcentration
-            });
-
+            sensor_data.push(sensor.data);
             sensor.timeout++;
         }
         // // Save sensor data to MongoDB example
