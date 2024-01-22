@@ -114,19 +114,29 @@ try {
 }
     }
 
-// Create a sample test data for the database
-const sensorData = new SensorData({
-    sensorId: "1",
-    temperature: 20,
-    humidity: 50,
-    gasConcentration: 100
-});
+// // Create a sample test data for the database
+// const sensorData = new SensorData({
+//     sensorId: "1",
+//     temperature: 20,
+//     humidity: 50,
+//     gasConcentration: 100
+// });
 
-// Save the sample data to the database
-saveSensorData(sensorData);
+// // Save the sample data to the database
+// saveSensorData(sensorData);
+
+// For averaging_values for database_entries
+var average_temp = 37;
+var average_humid = 80;
+var average_gasCon = 11;
+
+var average_counter = 1;
+
 
 setInterval(() => {
     const sensor_data = [];
+    // const sensor_entries = [];
+
 
     SENSORS.forEach(sensor => {
         if (sensor.timeout > 10) {
@@ -143,8 +153,14 @@ setInterval(() => {
                 gasConcentration: sensor.gasConcentration
             });
 
-            sensor.timeout++;
+            average_temp += sensor.temperature;
+            average_humid += sensor.humidity;
+            average_gasCon += sensor.gasConcentration;
+            average_counter++;
+
+            sensor.timeout++;           
         }
+
         // // Save sensor data to MongoDB example
         // var sensorData = new SensorData({
         //     sensorId: sensor.id,
@@ -161,3 +177,13 @@ setInterval(() => {
     });
 
 }, 1000);
+
+// Save sensor data to MongoDB example
+var sensorData = new SensorData({
+    sensorId: 'test',
+    temperature: average_temp / average_counter,
+    humidity: average_humid / average_counter,
+    gasConcentration: average_gasCon / average_counter
+});
+
+saveSensorData(sensorData);
