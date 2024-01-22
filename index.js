@@ -126,11 +126,11 @@ try {
 // saveSensorData(sensorData);
 
 // For averaging_values for database_entries
-var average_temp = 37;
-var average_humid = 80;
-var average_gasCon = 11;
+var average_temp = 0;
+var average_humid = 0;
+var average_gasCon = 0;
 
-var average_counter = 1;
+var average_counter = 0;
 
 
 setInterval(() => {
