@@ -1,6 +1,5 @@
 const path = require("path");
 const express = require("express");
-const { SensorData } = require("./server/models");
 
 const app = express();
 const appWs = require("express-ws")(app);
@@ -40,7 +39,7 @@ app.ws("/esp", (ws) => {
     };
 
     ws.gasConcentration = 0;
-    ws.averageCounter = 0;
+    ws.averageCounter = 1;
 
     ws.on("message", (msg) => {
         ws.timeout = 0;
@@ -59,15 +58,19 @@ app.ws("/esp", (ws) => {
 
                 case "data":
                     ws.gasConcentration =
-                        parsed_msg["gas_concentration"] || ws.gasConcentration;
+                        +parsed_msg["gas_concentration"] || ws.gasConcentration;
 
                     ws.data.temperature =
-                        parsed_msg["temperature"] || ws.data.temperature;
+                        +parsed_msg["temperature"] || ws.data.temperature;
+                    
                     ws.data.humidity =
-                        parsed_msg["humidity"] || ws.data.humidity;
-                    ws.data.ozone = parsed_msg["ozone"] || ws.data.ozone;
+                        +parsed_msg["humidity"] || ws.data.humidity;
+                    
+                    ws.data.ozone = 
+                        +parsed_msg["ozone"] || ws.data.ozone;
+                    
                     ws.data.carbonMonoxide =
-                        parsed_msg["carbon_monoxide"] || ws.data.carbonMonoxide;
+                        +parsed_msg["carbon_monoxide"] || ws.data.carbonMonoxide;
 
                     // Insert new row in database
                     // console.log(ws.data);
@@ -142,23 +145,39 @@ setInterval(() => {
 
             if (!hasZero) {
                 for (key in sensor.data) {
-                    sensor.averageData[key] = (sensor.averageData[key] + sensor.data[key]) / sensor.averageCounter;
+                    if (key !== "id" || key !== "timeout") {   
+                        sensor.averageData[key] = (sensor.averageData[key] + sensor.data[key]) / sensor.averageCounter;
+                    } 
+
+                    delete sensor.averageData["id"];
+                    delete sensor.averageData["timeout"];
+
                 }
                 
+                // console.log(sensor.data);
                 sensor.averageCounter++;
 
-                if (sensor.averageCounter >= 60) {
-                    // Create a sample test data for the database
-                    const sensorData = new SensorData({
-                        sensorId: sensor.id,
-                        temperature: sensor.averageData.temperature,
-                        humidity: sensor.averageData.humidity,
-                        ozone: sensor.averageData.ozone,
-                        carbonMonoxide: sensor.averageData.carbonMonoxide,
-                    });
+                if (sensor.averageCounter > 5) {
+                    console.log(sensor.averageData);
 
-                    // Save the sample data to the database
-                    saveSensorData(sensorData);
+                    sensor.averageCounter = 1;
+
+                    sensor.averageData.temperature = 0;
+                    sensor.averageData.humidity = 0;
+                    sensor.averageData.ozone = 0;
+                    sensor.averageData.carbonMonoxide = 0;
+
+                    // Create a sample test data for the database
+                    // const sensorData = new SensorData({
+                    //     sensorId: sensor.id,
+                    //     temperature: sensor.averageData.temperature,
+                    //     humidity: sensor.averageData.humidity,
+                    //     ozone: sensor.averageData.ozone,
+                    //     carbonMonoxide: sensor.averageData.carbonMonoxide,
+                    // });
+
+                    // // Save the sample data to the database
+                    // saveSensorData(sensorData);
                 }
             }
 
@@ -175,9 +194,6 @@ setInterval(() => {
 
         // saveSensorData(sensorData);
     });
-
-    if (average_counter >= 60) {
-    }
 
     USERS.forEach((user) => {
         user.send(JSON.stringify(sensor_data));
