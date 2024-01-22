@@ -10,7 +10,8 @@ app.use(express.static('client'));
 
 const PORT = process.env.PORT || 1337;
 // const ip = '192.168.43.119';
-const ip = '192.168.3.156';
+// const ip = '192.168.3.156';
+const ip = '192.168.4.3';
 
 const SENSORS = new Set();
 const USERS = new Set();
@@ -33,6 +34,7 @@ app.ws('/esp', ws => {
     ws.gasConcentration = 0;
     
     ws.on('message', msg => {
+        ws.timeout = 0;
         
         if (msg === "ping") {
             ws.timeout = 0;
@@ -79,6 +81,13 @@ app.ws('/browser', ws => {
 
     ws.on('message', msg => {
         console.log(`Browser has sent message: ${msg}`);
+
+        if (msg === 'disconnect-all') {
+            console.log('Disconnecting all sensors...');
+            SENSORS.forEach(sensor => {
+                sensor.send('disconnect');
+            });
+        }
     });
 
     ws.on('close', () => {
@@ -111,6 +120,9 @@ setInterval(() => {
             console.log(`Removed unresponsive sensor ${sensor.id}`);
 
         } else {
+            sensor.data.id = sensor.id;
+            sensor.data.timeout = sensor.timeout;
+
             sensor_data.push(sensor.data);
             sensor.timeout++;
         }

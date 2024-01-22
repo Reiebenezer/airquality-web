@@ -48,6 +48,8 @@
 
             <footer>
                 <svg class="icon"></svg>
+
+                <button class="disconnect" >Disconnect All Sensors</button>
                 <h2>Air Quality</h2>
                 <p>by Cyb Robotics</p>
             </footer>
@@ -61,11 +63,21 @@
                 console.log("Connected to WebSocket channel for the browser");
             });
 
+            document.querySelector('.disconnect').addEventListener('click', disconnectAll);
+
+            function disconnectAll() {
+                console.log('disconnecting all sensors...');
+                socket.send('disconnect-all');
+            }
+
             socket.addEventListener("message", (msg) => {
                 const sensors = JSON.parse(msg["data"]);
 
                 sensors.forEach((sensor) => {
-                    // console.log(sensor);
+                    
+                    console.clear();
+                    // console.log(JSON.stringify(sensor));
+                    console.log(`Sensor ${sensor.id}: ${sensor.timeout}`)
 
                     document.querySelector(
                         "#stat-temperature"
