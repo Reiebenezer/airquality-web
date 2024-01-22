@@ -17,13 +17,7 @@ async function saveSensorData(sensorData) {
     }
 }
 
-// Create a sample test data for the database
-const sensorData = new SensorData({
-    sensorId: "1",
-    temperature: 20,
-    humidity: 50,
-    gasConcentration: 100,
-});
-
-// Save the sample data to the database
-saveSensorData(sensorData);
+module.exports = {
+    SensorData,
+    saveSensorData
+}
