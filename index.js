@@ -9,6 +9,8 @@ app.set('views', path.join(__dirname, 'client'));
 app.use(express.static('client'));
 
 const PORT = process.env.PORT || 1337;
+// const ip = '192.168.43.119';
+const ip = '192.168.3.156';
 
 const SENSORS = new Set();
 const USERS = new Set();
@@ -54,6 +56,7 @@ app.ws('/esp', ws => {
                     ws.data.carbonMonoxide  = parsed_msg["carbon_monoxide"] || ws.data.carbonMonoxide;
 
                     // Insert new row in database
+                    // console.log(ws.data);
                     
                     break;
             
@@ -86,7 +89,7 @@ app.ws('/browser', ws => {
 
 
 app.get('/', (req, res) => {
-    res.render("index", { ip: 'ws://192.168.3.156:1337' });
+    res.render("index", { ip: `ws://${ip}:${PORT}` });
 });
 
 app.get('/db', (req, res) => {
