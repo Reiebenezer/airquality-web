@@ -120,20 +120,35 @@ try {
 }
     }
 
-// Create a sample test data for the database
-const sensorData = new SensorData({
-    sensorId: "1",
-    temperature: 20,
-    humidity: 50,
-    gasConcentration: 100
-});
+// // Create a sample test data for the database
+// const sensorData = new SensorData({
+//     sensorId: "1",
+//     temperature: 20,
+//     humidity: 50,
+//     gasConcentration: 100
+// });
 
+// // Save the sample data to the database
+// saveSensorData(sensorData);
+
+// For averaging_values for database_entries
+var average_temp = 0;
+var average_humid = 0;
+var average_gasCon = 0;
+
+var average_counter = 0;
+
+<<<<<<< HEAD
+=======
 app.listen(PORT, () => {
     console.log(`node: SERVER STARTED at port ${PORT}`);
 });
+>>>>>>> a9cdf3836ea1925b016fcc81da9fa4c3c859d5c1
 
 setInterval(() => {
     const sensor_data = [];
+    // const sensor_entries = [];
+
 
     SENSORS.forEach(sensor => {
         if (sensor.timeout > 10) {
@@ -143,9 +158,26 @@ setInterval(() => {
             console.log(`Removed unresponsive sensor ${sensor.id}`);
 
         } else {
+<<<<<<< HEAD
+            sensor_data.push({
+                id: sensor.id,
+                temperature: sensor.temperature,
+                humidity: sensor.humidity,
+                gasConcentration: sensor.gasConcentration
+            });
+
+            average_temp += sensor.temperature;
+            average_humid += sensor.humidity;
+            average_gasCon += sensor.gasConcentration;
+            average_counter++;
+
+            sensor.timeout++;           
+=======
             sensor_data.push(sensor.data);
             sensor.timeout++;
+>>>>>>> a9cdf3836ea1925b016fcc81da9fa4c3c859d5c1
         }
+
         // // Save sensor data to MongoDB example
         // var sensorData = new SensorData({
         //     sensorId: sensor.id,
@@ -162,3 +194,13 @@ setInterval(() => {
     });
 
 }, 1000);
+
+// Save sensor data to MongoDB example
+var sensorData = new SensorData({
+    sensorId: 'test',
+    temperature: average_temp / average_counter,
+    humidity: average_humid / average_counter,
+    gasConcentration: average_gasCon / average_counter
+});
+
+saveSensorData(sensorData);
