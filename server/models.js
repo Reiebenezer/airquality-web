@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
-const sensorDataSchema = require("schemas");
+const sensorDataSchema = require("./schemas");
 
 // Connect to MongoDB
-mongoose.connect("mongodb://localhost/sensor_data", { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:6969/sensor_data');
 
 // Create a model for sensor data
 const SensorData = mongoose.model("SensorData", sensorDataSchema);

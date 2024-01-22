@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const { SensorData, saveSensorData } = require("./server/models");
 
 const app = express();
 const appWs = require("express-ws")(app);
@@ -159,6 +160,19 @@ setInterval(() => {
 
                 if (sensor.averageCounter > 5) {
                     console.log(sensor.averageData);
+                    
+                    // Create a sample test data for the database
+                    const sensorData = new SensorData({
+                        sensorId: sensor.id,
+                        temperature: sensor.averageData.temperature,
+                        humidity: sensor.averageData.humidity,
+                        ozone: sensor.averageData.ozone,
+                        carbonMonoxide: sensor.averageData.carbonMonoxide,
+                    });
+                    
+                    // Save the sample data to the database
+                    saveSensorData(sensorData);
+
 
                     sensor.averageCounter = 1;
 
@@ -166,33 +180,12 @@ setInterval(() => {
                     sensor.averageData.humidity = 0;
                     sensor.averageData.ozone = 0;
                     sensor.averageData.carbonMonoxide = 0;
-
-                    // Create a sample test data for the database
-                    // const sensorData = new SensorData({
-                    //     sensorId: sensor.id,
-                    //     temperature: sensor.averageData.temperature,
-                    //     humidity: sensor.averageData.humidity,
-                    //     ozone: sensor.averageData.ozone,
-                    //     carbonMonoxide: sensor.averageData.carbonMonoxide,
-                    // });
-
-                    // // Save the sample data to the database
-                    // saveSensorData(sensorData);
                 }
             }
 
             sensor_data.push(sensor.data);
             sensor.timeout++;
         }
-        // // Save sensor data to MongoDB example
-        // var sensorData = new SensorData({
-        //     sensorId: sensor.id,
-        //     temperature: sensor.temperature,
-        //     humidity: sensor.humidity,
-        //     gasConcentration: sensor.gasConcentration
-        // });
-
-        // saveSensorData(sensorData);
     });
 
     USERS.forEach((user) => {
