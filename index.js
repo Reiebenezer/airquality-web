@@ -4,11 +4,13 @@ const express = require('express');
 const app = express();
 const appWs = require('express-ws')(app);
 
-const PORT = process.env.PORT || 16969;
+const PORT = process.env.PORT || 1337;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'client'));
 app.use(express.static('client'));
+
+const mongoose = require('mongoose');
 
 const SENSORS = new Set();
 const USERS = new Set();
@@ -107,7 +109,6 @@ const sensorDataSchema = new mongoose.Schema({
 
 // Create a model for sensor data
 const SensorData = mongoose.model('SensorData', sensorDataSchema);
-
 
 // To be modified to work for the saving the data
 async function saveSensorData(sensorData) {
