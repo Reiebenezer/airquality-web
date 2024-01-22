@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const appWs = require('express-ws')(app);
 
-const PORT = process.env.PORT || 1337;
+const PORT = process.env.PORT || 16969;
 
 const SENSORS = new Set();
 const USERS = new Set();
@@ -89,7 +89,7 @@ app.listen(PORT, () => {
 
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost/sensor_data', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:6969/sensor_data');
 
 // Define a schema for sensor data
 const sensorDataSchema = new mongoose.Schema({
