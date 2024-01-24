@@ -12,7 +12,7 @@ app.use(express.static("client"));
 const PORT = process.env.PORT || 1337;
 // const ip = '192.168.43.119';
 // const ip = '192.168.3.156';
-const ip = "192.168.4.3";
+const ip = "192.168.4.3"; 
 
 const SENSORS = new Set();
 const USERS = new Set();
@@ -133,9 +133,6 @@ setInterval(() => {
             SENSORS.delete(sensor);
             console.log(`Removed unresponsive sensor ${sensor.id}`);
         } else {
-            sensor.data.id = sensor.id;
-            sensor.data.timeout = sensor.timeout;
-
             let hasZero = false;
             for (key in sensor.data) {
                 if (sensor.data[key] === 0) {
@@ -143,6 +140,8 @@ setInterval(() => {
                     break;
                 }
             }
+
+            console.log(sensor.averageCounter, sensor.data);
 
             if (!hasZero) {
                 for (key in sensor.data) {
