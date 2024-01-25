@@ -2,6 +2,8 @@ const path = require("path");
 const express = require("express");
 const { SensorData, saveSensorData } = require("./server/models");
 
+
+
 const app = express();
 const appWs = require("express-ws")(app);
 
@@ -166,16 +168,12 @@ setInterval(() => {
 
                     if (key !== "id" || key !== "timeout") {
                         // Check if sensor.data[key] is within 10% of sensor.averageData[key]
-                        if(sensor.data[key] > 0.9 * sensor.averageData[key] && sensor.data[key] < 1.1 * sensor.averageData[key]) {
+                        sensor.tempData[key] = sensor.averageData[key];
+                        var threshold = sensor.averageData[key] - sensor.data[key];
+                        if(Math.abs(threshold) > 0.1 * sensor.averageData[key]) {
                             sensor.tempData[key] += sensor.data[key]; // add new data point to running total
                             sensor.averageData[key] = sensor.tempData[key] / sensor.averageCounter; // calculate average
                             console.log(sensor.tempData);
-                        } else {
-                            sensor.averageData[key] = sensor.data[key];
-                            // sensor.data[key] is not within 10% of sensor.averageData[key]
-                            // Handle this case as needed
-                            break;
-
                         }
                     }
                     
@@ -210,6 +208,13 @@ setInterval(() => {
                     sensor.averageCounter = 1;
 
                     sensor.averageData.temperature = 0;
+                    sensor.averageData.humidity = 0;
+                    sensor.averageData.ozone = 0;
+                    sensor.averageData.carbonMonoxide = 0;
+
+                    // Reseting Temp Data
+
+                    sensor.tempData.temperature = 0;
                     sensor.averageData.humidity = 0;
                     sensor.averageData.ozone = 0;
                     sensor.averageData.carbonMonoxide = 0;
