@@ -38,6 +38,13 @@ app.ws("/esp", (ws) => {
         ozone: 0,
         carbonMonoxide: 0,
     };
+    ws.tempData = {
+        temperature: 0,
+        humidity: 0,
+        ozone: 0,
+        carbonMonoxide: 0,
+    };
+
 
     ws.gasConcentration = 0;
     ws.averageCounter = 1;
@@ -145,19 +152,45 @@ setInterval(() => {
 
             if (!hasZero) {
                 for (key in sensor.data) {
-                    if (key !== "id" || key !== "timeout") {   
-                        sensor.averageData[key] = (sensor.averageData[key] + sensor.data[key]) / sensor.averageCounter;
-                    } 
+                    // if (key !== "id" || key !== "timeout") {
+                    //     sensor.tempData[key] += sensor.data[key]; // add new data point to running total
+                    //     sensor.averageData[key] = sensor.tempData[key] / sensor.averageCounter; // calculate average
+
+                    // // Algorithm for the processing of the files needed to parse the changes in the last and initial data within a threshold of 10%
+                    //     // let temp = sensor.averageData[key] + sensor.data[key];
+                    //     if(temp > 0.9 * sensor.averageData[key] && temp < 1.1 * sensor.averageData[key]) {
+                    //         sensor.averageData[key] = sensor.data[key];
+                    //     }
+                    //     // console.log(0.9 * sensor.averageData[key]);
+                    // }
+
+                    if (key !== "id" || key !== "timeout") {
+                        // Check if sensor.data[key] is within 10% of sensor.averageData[key]
+                        if(sensor.data[key] > 0.9 * sensor.averageData[key] && sensor.data[key] < 1.1 * sensor.averageData[key]) {
+                            sensor.tempData[key] += sensor.data[key]; // add new data point to running total
+                            sensor.averageData[key] = sensor.tempData[key] / sensor.averageCounter; // calculate average
+                            console.log(sensor.tempData);
+                        } else {
+                            sensor.averageData[key] = sensor.data[key];
+                            // sensor.data[key] is not within 10% of sensor.averageData[key]
+                            // Handle this case as needed
+                            break;
+
+                        }
+                    }
+                    
+                    
+
 
                     delete sensor.averageData["id"];
                     delete sensor.averageData["timeout"];
 
                 }
-                
+
                 // console.log(sensor.data);
                 sensor.averageCounter++;
 
-                if (sensor.averageCounter > 5) {
+                if (sensor.averageCounter > 60) {
                     console.log(sensor.averageData);
                     
                     // Create a sample test data for the database
@@ -168,6 +201,7 @@ setInterval(() => {
                         ozone: sensor.averageData.ozone,
                         carbonMonoxide: sensor.averageData.carbonMonoxide,
                     });
+                    
                     
                     // Save the sample data to the database
                     saveSensorData(sensorData);
