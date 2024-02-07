@@ -15,7 +15,7 @@ app.use(express.static("client"));
 const PORT = process.env.PORT || 1337;
 // const ip = '192.168.43.119';
 // const ip = '192.168.3.156';
-const ip = "192.168.4.3"; 
+const ip = "192.168.4.2"; 
 
 
 const SENSORS = new Set();
@@ -130,42 +130,6 @@ app.get("/db", (req, res) => {
     res.sendFile(path.join(__dirname, "client/db.html"));
 });
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:6969/sensor_data');
-
-// Define a schema for sensor data
-const sensorDataSchema = new mongoose.Schema({
-  sensorId: String,
-  temperature: Number,
-  humidity: Number,
-  gasConcentration: Number,
-  timestamp: { type: Date, default: Date.now }
-});
-
-// Create a model for sensor data
-const SensorData = mongoose.model('SensorData', sensorDataSchema);
-
-// To be modified to work for the saving the data
-async function saveSensorData(sensorData) {
-try {
-    const data = await sensorData.save();
-    console.log('Sensor data saved successfully!');
-} catch (err) {
-    console.error(err);
-}
-    }
-
-// // Create a sample test data for the database
-// const sensorData = new SensorData({
-//     sensorId: "1",
-//     temperature: 20,
-//     humidity: 50,
-//     gasConcentration: 100
-// });
-
-// // Save the sample data to the database
-// saveSensorData(sensorData);
-
 // For averaging_values for database_entries
 var average_temp = 0;
 var average_humid = 0;
@@ -197,21 +161,12 @@ setInterval(() => {
                 }
             }
 
+            
             console.log(sensor.averageCounter, sensor.data);
+            sensor_data.push({...sensor.data, id: sensor.id, timeout: sensor.timeout});
 
             if (!hasZero) {
                 for (key in sensor.data) {
-                    // if (key !== "id" || key !== "timeout") {
-                    //     sensor.tempData[key] += sensor.data[key]; // add new data point to running total
-                    //     sensor.averageData[key] = sensor.tempData[key] / sensor.averageCounter; // calculate average
-
-                    // // Algorithm for the processing of the files needed to parse the changes in the last and initial data within a threshold of 10%
-                    //     // let temp = sensor.averageData[key] + sensor.data[key];
-                    //     if(temp > 0.9 * sensor.averageData[key] && temp < 1.1 * sensor.averageData[key]) {
-                    //         sensor.averageData[key] = sensor.data[key];
-                    //     }
-                    //     // console.log(0.9 * sensor.averageData[key]);
-                    // }
 
                     if (key !== "id" || key !== "timeout") {
                         // Check if sensor.data[key] is within 10% of sensor.averageData[key]
@@ -268,19 +223,13 @@ setInterval(() => {
                 }
             }
 
-            sensor_data.push({
-                id: sensor.id,
-                temperature: sensor.temperature,
-                humidity: sensor.humidity,
-                gasConcentration: sensor.gasConcentration
-            });
-
             average_temp += sensor.temperature;
             average_humid += sensor.humidity;
             average_gasCon += sensor.gasConcentration;
             average_counter++;
 
-            sensor.timeout++;           
+            sensor.timeout++;       
+        }    
     });
 
     USERS.forEach((user) => {
