@@ -2,8 +2,11 @@ const path = require("path");
 const express = require("express");
 const { SensorData, saveSensorData } = require("./server/models");
 
+
+
 const app = express();
 const appWs = require("express-ws")(app);
+
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "client"));
@@ -12,7 +15,8 @@ app.use(express.static("client"));
 const PORT = process.env.PORT || 1337;
 // const ip = '192.168.43.119';
 // const ip = '192.168.3.156';
-const ip = "192.168.4.3";
+const ip = "192.168.4.2"; 
+
 
 const SENSORS = new Set();
 const USERS = new Set();
@@ -38,6 +42,13 @@ app.ws("/esp", (ws) => {
         ozone: 0,
         carbonMonoxide: 0,
     };
+    ws.tempData = {
+        temperature: 0,
+        humidity: 0,
+        ozone: 0,
+        carbonMonoxide: 0,
+    };
+
 
     ws.gasConcentration = 0;
     ws.averageCounter = 1;
@@ -119,12 +130,21 @@ app.get("/db", (req, res) => {
     res.sendFile(path.join(__dirname, "client/db.html"));
 });
 
+// For averaging_values for database_entries
+var average_temp = 0;
+var average_humid = 0;
+var average_gasCon = 0;
+
+var average_counter = 0;
+
 app.listen(PORT, () => {
     console.log(`node: SERVER STARTED at port ${PORT}`);
 });
 
 setInterval(() => {
     const sensor_data = [];
+    // const sensor_entries = [];
+
 
     SENSORS.forEach((sensor) => {
         if (sensor.timeout > 10) {
@@ -133,9 +153,6 @@ setInterval(() => {
             SENSORS.delete(sensor);
             console.log(`Removed unresponsive sensor ${sensor.id}`);
         } else {
-            sensor.data.id = sensor.id;
-            sensor.data.timeout = sensor.timeout;
-
             let hasZero = false;
             for (key in sensor.data) {
                 if (sensor.data[key] === 0) {
@@ -144,21 +161,36 @@ setInterval(() => {
                 }
             }
 
+            
+            console.log(sensor.averageCounter, sensor.data);
+            sensor_data.push({...sensor.data, id: sensor.id, timeout: sensor.timeout});
+
             if (!hasZero) {
                 for (key in sensor.data) {
-                    if (key !== "id" || key !== "timeout") {   
-                        sensor.averageData[key] = (sensor.averageData[key] + sensor.data[key]) / sensor.averageCounter;
-                    } 
+
+                    if (key !== "id" || key !== "timeout") {
+                        // Check if sensor.data[key] is within 10% of sensor.averageData[key]
+                        sensor.tempData[key] = sensor.averageData[key];
+                        var threshold = sensor.averageData[key] - sensor.data[key];
+                        if(Math.abs(threshold) > 0.1 * sensor.averageData[key]) {
+                            sensor.tempData[key] += sensor.data[key]; // add new data point to running total
+                            sensor.averageData[key] = sensor.tempData[key] / sensor.averageCounter; // calculate average
+                            console.log(sensor.tempData);
+                        }
+                    }
+                    
+                    
+
 
                     delete sensor.averageData["id"];
                     delete sensor.averageData["timeout"];
 
                 }
-                
+
                 // console.log(sensor.data);
                 sensor.averageCounter++;
 
-                if (sensor.averageCounter > 5) {
+                if (sensor.averageCounter > 60) {
                     console.log(sensor.averageData);
                     
                     // Create a sample test data for the database
@@ -170,6 +202,7 @@ setInterval(() => {
                         carbonMonoxide: sensor.averageData.carbonMonoxide,
                     });
                     
+                    
                     // Save the sample data to the database
                     saveSensorData(sensorData);
 
@@ -180,12 +213,23 @@ setInterval(() => {
                     sensor.averageData.humidity = 0;
                     sensor.averageData.ozone = 0;
                     sensor.averageData.carbonMonoxide = 0;
+
+                    // Reseting Temp Data
+
+                    sensor.tempData.temperature = 0;
+                    sensor.averageData.humidity = 0;
+                    sensor.averageData.ozone = 0;
+                    sensor.averageData.carbonMonoxide = 0;
                 }
             }
 
-            sensor_data.push(sensor.data);
-            sensor.timeout++;
-        }
+            average_temp += sensor.temperature;
+            average_humid += sensor.humidity;
+            average_gasCon += sensor.gasConcentration;
+            average_counter++;
+
+            sensor.timeout++;       
+        }    
     });
 
     USERS.forEach((user) => {
