@@ -1,47 +1,40 @@
-
+echo off
 echo Cyb: Robotics Air Quality Monitor
 color 0a  
-@echo off
-echo                                                                  ^&^&^#^#BGGGPGGB^&  
-echo                                                                BGGGGGBB^#^&^&    ^&^#
-echo                                                                GPPB          ^&GP
-echo                                                                BPPP^#        ^#PP^#
-echo                                                                ^&PBBB^#^&     BPP^# 
-echo                            ^&BBBBBBBB^&                         ^#^#^#^&GG^&GPGGBGPP^&  
-echo                            ^#PPPPPPPP^#                      ^#BGB^#^#^#^#^#BGGGGPPG^&   
-echo                     ^&^&^#BGGGPPPPPPPPPPGGGB^#^&^&            ^&BGG^#^#BPG^#              
-echo            ^#B^#  ^&^#BGPPPGGB^#^#^#^#^#^#^#^#^#^#^#^#BGGPPPGB^#^&     ^&BGPB^#^#GPG^#                
-echo          ^#GPPPGGPPPB^#^&^&^&^#BBGGGGGGGGGGBB^#^#^&^#^#GPPPG^#^&BGPG^#^&BGPG^#                  
-echo        ^#GPPPPPPPB^&^&^#BGPPPPPPPPPPPPPPPPPPPPGB^& ^&^#GPPPB^#^#BPPG^#                    
-echo       ^&BPPPPPG^#^&^#BPPPPPPPPPPGGGGGGGGPPPPPGB^&^&^#GPPG^#^&^#GPPG^#                      
-echo         BPPG^#^&^#GPPPPPPPGB^#^&^&        ^&^&^#^#^&^&^#GPPPG^#^&BGPPG^#                        
-echo       ^&GPPB ^#GPPPPPPG^#^&                ^#BPPPGB^&^#BPPPG^#^&BG^&                      
-echo      ^&GPP^# BPPPPPPB^&                ^#BPPPPG^#^&^#GPPPG^#^& ^#PPG^&                     
-echo      GPP^# GPPPPPG^&               ^#BPPPPPB^&^&BPPPPG^#^&BPB ^#PPG                     
-echo     BPPB GPPPPPB               ^#GPPPPG^#^&^#GPPPPG^#^&BPPPP^# BPPB                    
-echo    ^&PPG ^#PPPPPG        ^&^#^#BBBB^#^#^#^#GG^#^&^#GPPPPG^#   GPPPPP^& GPP^&                   
-echo GGGGPPB GPPPPP^&      BBBBB^& ^&^&^&^#BB^& BPPPPPG^#     ^&PPPPPB BPPGGGG                
-echo PPPPPP^#^&PPPPPG     ^&GBBBGG^&^&GGB^& ^#G^&^&GPPG^#        GPPPPP^&^#PPPPPP                
-echo PPPPPP^&^&PPPPPG     GB^#GGBBB^#BPGP^& ^#P ^#G^#          GPPPPP^&^&PPPPPG                
-echo PPPPPP^# PPPPPP^&    G^#BGGBPB^&^#G^&^#^& ^&P^&            ^&PPPPPG ^#PPPPPG                
-echo ^&^&^&^#PPG BPPPPPB    ^#G^#BBGGGGBBB^#B^&GB             BPPPPPB GPP^#^&^&^&                
-echo     GPP^#^&PPPPPP^#    ^#GBBBBGGGBBBBG^#             ^#PPPPPP^&^#PPG                    
-echo     ^&PPP^&^&PPPPPP^#     ^#BBBBBBBBB^#^&^#^#           ^#PPPPPP^&^&PPP^&                    
-echo      ^#PPG^&^&PPPPPPG^&      ^&^&^#^#^#^& BPPPB        ^&GPPPPPP^&^&GPP^#                     
-echo       ^#PPP^#^&GPPPPPPB^#      ^&GPG^&^&BPPPG^&    ^#BPPPPPPG^&^#PPP^#                      
-echo        ^&GPPB^&^#GPPPPPPGB^#^&    BPPB ^#PPPPB ^&GPPPPPPG^#^&BPPG^&                       
-echo        ^#GPPPPB^&^#BPPPPPPPPGGBB^&^&GPG^&^&GPPPG^&^&GPPPB^#^&BPPPPG^#                       
-echo       ^&GPPPPPPPG^#^&^#BGPPPPPPPPP^# BPPB ^#PPPP^# B^#^#^#GPPPPPPPG^&                      
-echo         ^&BPPPPPPPPG^#^#^#^#BGGPPPPPB^&^&GPG^&^&GPPPB  GPPPPPPPB^&                        
-echo           ^&BGB^& ^#BGPPPGBB^#^#^#^#^#^#^#^#  BPP^# ^#PPPG^#^&^# ^&BGB^&                          
-echo                    ^&^#BBGPPPPPGGGGPB^&^&GPG^&^&GPPPB                                 
-echo                          ^&^&BPPPPPPPP^& BPP^# BPPPG^&                               
-echo                            ^#PPPPPPPP^#  ^#PPG^&^&GPPP^#                              
-
+                                                                                                                                                                                                                                              
+echo                                                       ^&^&^#BBBBB^#^&                                                        
+echo                                                      GPGB^#^&^&    B^&                                                      
+echo                                                      BPP^&      GP^&                                                      
+echo                                                      ^#GBB^#^&^& ^&GP^&                                                       
+echo                            ^#GGGGGG                 ^#B^#^#BBBPPGPG^&                      B^#                                
+echo                       ^&^#^#BBGPPPPPPGBB^#^&         ^&BBBBGB^& ^&^&^&^&^&                        ^&YG GG                            
+echo                ^#G^#^&^#BGGGBB^#^#^#^#^#^#^#^#^#BBGGGGB^&  ^&BGBBBGG^&                              ^#^# G?^#^#!P                           
+echo              ^#GPPPPGB^#^#BBGGPPPPPPPPGGBB^#^#BGGGGB^#BPG^#                                G5 P7B^&!!^#                          
+echo             ^&GPPPB^#^#BGPPPPPGGGGGGGPPPGB^#^#GPG^#^#GPG^#                                 BJB^#?J^&5~~G   ^&^&^&^&^&                  
+echo              BPG^#^#GPPPPGB^&^&        ^&^#^#BPPB^#BGPG^#^&                                 PJGG?Y^#P!~7^#   BPPPB                  
+echo             GPB^&GPPPPB^&           ^#BPPGB^#BPPG^# GP^#                               55B5JGG?~~!B    BPPPB                  
+echo            GPB^&GPPPG^&          ^&BGPPG^#^#GPPG^#^#G^#^&PP^&                             P5GJPGJ~~!Y^&     BPPPB                  
+echo           ^#PG^&GPPPB      ^&^&^&^&^&^#GPPB^#BGPPG^#^&GPPP^&^#PG                            ^&YGJGY~~75G^&^&^#^&   BPPPB                  
+echo        ^&BBGP^#^#PPPG     ^#BB^#^&^#^#^#^#^#^&BPPPG^#   BPPPG GPBB^#                         ^&55PY~!P^&5YY?JJ^#  BPPPB                  
+echo        ^#PPPP^&BPPPB   ^&BBBG^#^#BB^&^&B^&BPG^#     ^&PPPP^&BPPPG                          G5G7!^#  GPPPPP^&  BPPP^#                  
+echo        ^#PPPP^&BPPPB   BBBGBB^&BBB ^#B^&^#       ^&PPPP^&BPPPG                          ^&GPJ?  ^&^#^# ^&^#^&^#  BPPG^&                  
+echo        ^&^#^#GP^#^#PPPG^&  ^#BBBGGBBB^#^&B^#         BPPPG^&GPB^#^#                           ^&BGJB  ^&^&^&^&^&^&  BPPB^&                   
+echo           ^#PG^&GPPPG   ^#BBBBBBBBB^#         ^#PPPP^#^#PG                                 ^&B^#^& ^&^&^&^&^&^#GGB^&                     
+echo            BPB^&GPPPG^&   ^&^#^#^#^#^#^#BGB       ^#PPPP^#^#PP^&                                     ^&^&^&^&^#^#^&^&                        
+echo             BPG^&BPPPPB^&    ^&GG^&BPPG^&  ^&^#GPPPG^#^#PG^&                                                                      
+echo              BPG^#^#GPPPPGB^#^& ^&GP^#^&GPP^#^&GPPPGB^#BPG^&                       ^&P^&^#G^#^#  ^#G BG ^&P^& ^#B^&^#^#^&^#^&^#^#^#^&^#B^&^#^# ^#          
+echo             ^#PPPPGB^#BGPPPPPPG^&^#PB^&BPPB^&BGB^#BPPPPB                       ^#5^&B5^#^&  ^#5 GP ^#5^& ^&^&^&^&^&^&^&^&^&^&^&^&^&^#^&^&^#^&^#^&         
+echo              ^&BPPPGGGBBBBGGGPP^#^&GP^#^#GPG^&^&GGPPPG^#                       ^#BP BP^#^&^&^#BG ^#P^#BP^& ^#^#^#BB^#^#B^#B^#B^#^#^#^#^#^&B^&         
+echo                ^&B^& ^&^#BGGGGBBBBB^#^&BPB^&BPPB^& ^&^#^#                         ^&^&    ^&  ^&^&    ^&^&                                
+echo                        ^&^&^#^#GPPPPP^#^&GG^#^#PPG^&                                                                             
+echo                            ^#GGGGGG  BG^#^&GGG^&                                                                                                                                                                                            
+                                                                                                                                                                                                                                           
 pause 
 
 cd C:\Users\User\Desktop\airquality-web
-start http:\\localhost:1337 
+start http:\\localhost:1337
 make run_server
+
+
 
 pause 
